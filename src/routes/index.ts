@@ -1,4 +1,6 @@
 import { Router, Request, Response } from 'express';
+import { getRepository } from 'typeorm';
+import { User } from '@entities/User.entity';
 
 class ConfigureRoutes {
     private router: Router;
@@ -17,8 +19,10 @@ class ConfigureRoutes {
          *       200:
          *         description: Lista de usuarios
          */
-        this.router.get('/users', (req: Request, res: Response) => {
-            res.json({ message: 'Hello World' });
+        this.router.get('/users', async (req: Request, res: Response) => {
+            const userRepository = getRepository(User);
+            const users = await userRepository.find();
+            res.json(users);
         });
 
         /**
@@ -30,8 +34,11 @@ class ConfigureRoutes {
          *       201:
          *         description: Usuario creado
          */
-        this.router.post('/users', (req: Request, res: Response) => {
-            res.status(201).json({ message: 'Usuario creado' });
+        this.router.post('/users', async (req: Request, res: Response) => {
+            const userRepository = getRepository(User);
+            const user = userRepository.create(req.body);
+            await userRepository.save(user);
+            res.status(201).json(user);
         });
     }
 

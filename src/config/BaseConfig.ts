@@ -1,7 +1,6 @@
 import { config } from 'dotenv';
 import { join } from 'path';
 
-
 export type Environment = 'development' | 'production' | 'test';
 
 export abstract class BaseConfig {
@@ -22,6 +21,7 @@ export abstract class BaseConfig {
             'DB_PORT',
             'DB_USER',
             'DB_PASS',
+            'DB_DATABASE',
             'PORT',
             'SECRET_KEY'
         ];

@@ -1,4 +1,4 @@
-import Config from './config/Config'
+import Config from '@config/Config';
 import express, { Application } from 'express';
 import { json } from 'body-parser';
 import helmet from 'helmet';
@@ -6,7 +6,8 @@ import ConfigureRoutes from './routes';
 import { errorHandler } from './middlewares';
 import compression from 'compression';
 import morgan from "morgan";
-import SwaggerConfig from './services/Swagger';
+import SwaggerConfig from '@services/Swagger';
+import dataSource from './data-source';
 
 class App {
     private app: Application;
@@ -18,7 +19,7 @@ class App {
         this.initialize();
     }
 
-    private initialize(): void {
+    private async initialize(): Promise<void> {
         this.app.use(json());
         this.app.use(helmet());
         this.app.use(compression());
@@ -31,10 +32,19 @@ class App {
         const swaggerOptions = SwaggerConfig.getSwaggerOptions();
         const swaggerDocs = SwaggerConfig.getSwaggerDocs(swaggerOptions);
         this.app.use('/api-docs', SwaggerConfig.getSwaggerUi(), SwaggerConfig.getSwaggerUiSetup(swaggerDocs));
+
+        // Conexión a la base de datos
+        try {
+            await dataSource.initialize();
+            console.log('📦 Conexión a la base de datos establecida');
+        } catch (error) {
+            console.error('❌ Error al conectar la base de datos:', error);
+        }
     }
 
     public async start(): Promise<void> {
         try {
+            await this.initialize();
             this.middlewares();
             this.routes();
             this.errorHandler();

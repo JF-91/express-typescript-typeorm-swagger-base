@@ -1,6 +1,7 @@
 import {BaseConfig} from './BaseConfig'
 import rateLimit from "express-rate-limit";
 import cors from 'cors';
+import { DataSourceOptions } from 'typeorm';
 
 class Config extends BaseConfig {
    constructor() {
@@ -14,6 +15,20 @@ class Config extends BaseConfig {
             user: this.getEnvVar('DB_USER'),
             password: this.getEnvVar('DB_PASS'),
             database: this.getEnvVar('DB_DATABASE')
+        };
+    }
+
+    public getTypeOrmConfig(): DataSourceOptions {
+        return {
+            type: 'postgres',
+            host: this.getEnvVar('DB_HOST'),
+            port: this.getEnvVarAsNumber('DB_PORT'),
+            username: this.getEnvVar('DB_USER'),
+            password: this.getEnvVar('DB_PASS'),
+            database: this.getEnvVar('DB_DATABASE'),
+            entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+            migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+            synchronize: false,
         };
     }
 
