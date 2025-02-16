@@ -1,0 +1,88 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("PRISMA_DATABASE_URL")
+}
+
+model User {
+    id        Int      @id @default(autoincrement())
+    email     String   @unique
+    name      String?
+    password  String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    posts     Post[]
+    role      Role     @relation(fields: [roleId], references: [id])
+    roleId    Int
+    profile   Profile?
+}
+
+model Role {
+    id          Int          @id @default(autoincrement())
+    name        String       @unique
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+    users       User[]
+    permissions Permission[] @relation("RolePermissions")
+}
+
+model Permission {
+    id        Int      @id @default(autoincrement())
+    name      String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now())
+    roles     Role[]   @relation("RolePermissions")
+}
+
+model Profile {
+    id        Int      @id @default(autoincrement())
+    bio       String?
+    userId    Int      @unique
+    user      User     @relation(fields: [userId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Post {
+    id         Int        @id @default(autoincrement())
+    title      String
+    content    String
+    published  Boolean    @default(false)
+    author     User?      @relation(fields: [authorId], references: [id])
+    authorId   Int?
+    createdAt  DateTime   @default(now())
+    updatedAt  DateTime   @updatedAt
+    categories Category[] @relation("PostCategories")
+}
+
+model Page {
+    id        Int      @id @default(autoincrement())
+    title     String
+    content   String
+    slug      String   @unique
+    published Boolean  @default(false)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Category {
+    id        Int      @id @default(autoincrement())
+    name      String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now())
+    posts     Post[]   @relation("PostCategories")
+}
+
+model PostCategories {
+    postId     Int
+    categoryId Int
+    createdAt  DateTime @default(now())
+
+    @@id([postId, categoryId])
+    @@index([categoryId])
+    @@index([postId])
+    @@map("post_categories")
+}

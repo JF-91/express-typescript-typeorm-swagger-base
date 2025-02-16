@@ -1,20 +1,21 @@
-import Config from './config/Config'
+import 'reflect-metadata';
 import express, { Application } from 'express';
-import { json } from 'body-parser';
-import helmet from 'helmet';
-import ConfigureRoutes from './routes';
-import { errorHandler } from './middlewares';
+import Config from '@config/Config';
 import compression from 'compression';
-import morgan from "morgan";
-import SwaggerConfig from './services/Swagger';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import { json } from 'body-parser';
+import { errorHandler } from '@middlewares/errorHandler';
+import SwaggerConfig from '@services/Swagger';
+import configureRoutes from 'routes/configureRoutes';
 
 class App {
     private app: Application;
     private config: typeof Config;
 
-    constructor() { 
-        this.app = express();
+    constructor() {
         this.config = Config;
+        this.app = express();
         this.initialize();
     }
 
@@ -31,12 +32,14 @@ class App {
         const swaggerOptions = SwaggerConfig.getSwaggerOptions();
         const swaggerDocs = SwaggerConfig.getSwaggerDocs(swaggerOptions);
         this.app.use('/api-docs', SwaggerConfig.getSwaggerUi(), SwaggerConfig.getSwaggerUiSetup(swaggerDocs));
+
+        // Configuración de rutas
+        configureRoutes(this.app);
     }
 
     public async start(): Promise<void> {
         try {
             this.middlewares();
-            this.routes();
             this.errorHandler();
 
             const { port } = this.config.getServerConfig();
@@ -54,11 +57,6 @@ class App {
 
     private middlewares(): void {
         this.app.use(json());
-    }
-
-    private routes(): void {
-        const apiRoutes = ConfigureRoutes.getRoutes();
-        this.app.use('/api', apiRoutes);
     }
 
     private errorHandler(): void {

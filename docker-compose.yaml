@@ -1,14 +1,15 @@
 services:
-  db:
-    image: postgres:13
+  mysql:
+    image: mysql:8
     ports:
-      - "5432:5432"
+      - "3306:3306"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/mysql
 
   app:
     build:
@@ -17,23 +18,23 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      - mysql
     environment:
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: ${PRISMA_DATABASE_URL}
     volumes:
       - .:/app
     command: npm run dev
 
-  pgadmin:
-    image: dpage/pgadmin4
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
     ports:
-      - "5050:80"
+      - "8080:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    depends_on:
+      - mysql
 
 volumes:
   db-data:
-  pgadmin-data:
+  

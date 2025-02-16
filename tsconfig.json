@@ -8,11 +8,22 @@
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "rootDir": "./src",
+    "resolveJsonModule": true,
     "baseUrl": "./src",
     "paths": {
-      "*": ["node_modules/*", "*"]
-    }
+      "@modules/*": ["modules/*"],
+      "@config/*": ["config/*"],
+      "@services/*": ["services/*"],
+      "@middlewares/*": ["modules/shared/middlewares/*"],
+      "@interceptors/*": ["modules/shared/interceptors/*"],
+      "@routes/*": ["routes/*"]
+    },
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "moduleResolution": "node",
+    "lib": ["es6", "dom"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["node_modules", "dist"]
 }
