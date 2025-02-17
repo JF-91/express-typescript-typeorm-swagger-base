@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, MinLength, IsInt } from 'class-validator';
 
 export class UpdateUserDto {
     @IsEmail()
@@ -13,4 +13,8 @@ export class UpdateUserDto {
     @MinLength(6)
     @IsOptional()
     password?: string;
+
+    @IsInt()
+    @IsOptional()
+    roleId?: number;
 }

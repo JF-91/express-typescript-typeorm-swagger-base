@@ -1,3 +1,4 @@
-import { Profile } from "@prisma/client";
+import { Profile } from '@prisma/client';
+
 export interface IProfile extends Profile {
 }

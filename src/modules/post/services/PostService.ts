@@ -1,13 +1,18 @@
+import { Service } from 'typedi';
 import { CreatePostDto } from '../dtos/CreatePostDto';
 import { UpdatePostDto } from '../dtos/UpdatePostDto';
 import { IPost } from '../interfaces/IPost';
-import prisma from '@services/prisma';
+import { PrismaClient } from '@prisma/client';
 
+const prisma = new PrismaClient();
+
+@Service()
 class PostService {
     async getAllPosts(): Promise<IPost[]> {
         return prisma.post.findMany({
             include: {
-                categories: true
+                categories: true,
+                author: true
             }
         });
     }

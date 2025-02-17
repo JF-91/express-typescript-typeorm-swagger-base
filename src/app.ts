@@ -1,20 +1,24 @@
 import 'reflect-metadata';
 import express, { Application } from 'express';
-import Config from '@config/Config';
+import config from './config/Config';
 import compression from 'compression';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { json } from 'body-parser';
-import { errorHandler } from '@middlewares/errorHandler';
-import SwaggerConfig from '@services/Swagger';
-import configureRoutes from 'routes/configureRoutes';
+import { useContainer as useRoutingContainer, useExpressServer } from 'routing-controllers';
+import { Container } from 'typedi';
+import { errorHandler } from './modules/shared/middlewares/errorHandler';
+import SwaggerService from './services/Swagger';
+import configureRoutes from './routes/configureRoutes';
+
+// Configurar typedi como el contenedor de inyección de dependencias para routing-controllers
+useRoutingContainer(Container);
 
 class App {
     private app: Application;
-    private config: typeof Config;
+    private config = config;
 
     constructor() {
-        this.config = Config;
         this.app = express();
         this.initialize();
     }
@@ -28,10 +32,17 @@ class App {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(morgan('dev'));
 
+        // Configuración de rutas con prefijo global
+        const routingControllersOptions = {
+            routePrefix: '/api',  // Añadir prefijo global
+            controllers: [__dirname + '/modules/*/controllers/*{.ts,.js}'],
+            defaultErrorHandler: false
+        };
+
+        useExpressServer(this.app, routingControllersOptions);
+        
         // Configuración de Swagger
-        const swaggerOptions = SwaggerConfig.getSwaggerOptions();
-        const swaggerDocs = SwaggerConfig.getSwaggerDocs(swaggerOptions);
-        this.app.use('/api-docs', SwaggerConfig.getSwaggerUi(), SwaggerConfig.getSwaggerUiSetup(swaggerDocs));
+        SwaggerService.setup(this.app);
 
         // Configuración de rutas
         configureRoutes(this.app);

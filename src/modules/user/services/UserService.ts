@@ -1,15 +1,32 @@
+import { Service } from 'typedi';
 import { CreateUserDto } from '../dtos/CreateUserDto';
 import { UpdateUserDto } from '../dtos/UpdateUserDto';
 import { IUser } from '../interfaces/IUser';
-import prisma from '@services/prisma';
+import { PrismaClient } from '@prisma/client';
 
+const prisma = new PrismaClient();
+
+@Service()
 class UserService {
     async getAllUsers(): Promise<IUser[]> {
-        return prisma.user.findMany() as unknown as IUser[];
+        return prisma.user.findMany({
+            include: {
+                role: true,
+                profile: true,
+                posts: true
+            }
+        });
     }
 
     async getUserById(id: number): Promise<IUser | null> {
-        return prisma.user.findUnique({ where: { id } }) as unknown as IUser | null;
+        return prisma.user.findUnique({
+            where: { id },
+            include: {
+                role: true,
+                profile: true,
+                posts: true
+            }
+        });
     }
 
     async createUser(userData: CreateUserDto): Promise<IUser> {
@@ -19,15 +36,25 @@ class UserService {
                 name: userData.name,
                 password: userData.password,
                 roleId: userData.roleId
+            },
+            include: {
+                role: true,
+                profile: true,
+                posts: true
             }
-        }) as unknown as IUser;
+        });
     }
 
     async updateUser(id: number, userData: UpdateUserDto): Promise<IUser> {
         return prisma.user.update({
             where: { id },
             data: userData,
-        }) as unknown as IUser;
+            include: {
+                role: true,
+                profile: true,
+                posts: true
+            }
+        });
     }
 }
 

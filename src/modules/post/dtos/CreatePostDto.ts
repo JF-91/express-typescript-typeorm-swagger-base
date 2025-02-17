@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsBoolean, IsArray, IsInt, ArrayNotEmpty, ArrayMinSize } from 'class-validator';
+import { IsString, IsBoolean, IsNotEmpty, IsArray, IsInt } from 'class-validator';
 
 export class CreatePostDto {
     @IsString()
@@ -14,12 +14,9 @@ export class CreatePostDto {
     published: boolean;
 
     @IsArray()
-    @ArrayNotEmpty()
-    @ArrayMinSize(1)
     @IsInt({ each: true })
     categoryIds: number[];
 
     @IsInt()
-    @IsNotEmpty()
     authorId: number;
 }

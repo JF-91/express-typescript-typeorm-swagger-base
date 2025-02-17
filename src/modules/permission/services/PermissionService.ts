@@ -1,7 +1,11 @@
+import { Service } from 'typedi';
 import { CreatePermissionDto } from '../dtos/CreatePermissionDto';
 import { IPermission } from '../interfaces/IPermission';
-import prisma from '@services/prisma';
+import { PrismaClient } from '@prisma/client';
 
+const prisma = new PrismaClient();
+
+@Service()
 class PermissionService {
     async getAllPermissions(): Promise<IPermission[]> {
         return prisma.permission.findMany();

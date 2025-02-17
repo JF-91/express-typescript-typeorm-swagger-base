@@ -56,13 +56,13 @@ export abstract class BaseConfig {
     }
 
     // Método para verificar si estamos en producción
-    protected isProduction(): boolean {
-        return this.env === 'production';
+    public isProduction(): boolean {
+        return process.env.NODE_ENV === 'production';
     }
 
     // Método para verificar si estamos en desarrollo
-    protected isDevelopment(): boolean {
-        return this.env === 'development';
+    public isDevelopment(): boolean {
+        return process.env.NODE_ENV === 'development';
     }
 
     // Método para verificar si estamos en testing

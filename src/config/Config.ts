@@ -1,12 +1,12 @@
-import {BaseConfig} from './BaseConfig'
-import rateLimit from "express-rate-limit";
+import { BaseConfig } from './BaseConfig';
+import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 
 class Config extends BaseConfig {
-   constructor() {
+    constructor() {
         super();
-   }
-    
+    }
+
     public getDatabaseConfig() {
         return {
             host: this.getEnvVar('DB_HOST'),
@@ -49,11 +49,11 @@ class Config extends BaseConfig {
     }
 
     public getCorsOptions() {
-       return cors({
+        return cors({
             origin: this.isProduction() ? process.env.ORIGIN : '*',
-            methods: ["GET", "POST", "PUT", "DELETE"], 
-            credentials: true 
-        })
+            methods: ['GET', 'POST', 'PUT', 'DELETE'],
+            credentials: true
+        });
     }
 
     public getRateLimitConfig() {

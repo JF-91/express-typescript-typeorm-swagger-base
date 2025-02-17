@@ -1,7 +1,11 @@
+import { Service } from 'typedi';
 import { CreatePageDto } from '../dtos/CreatePageDto';
 import { IPage } from '../interfaces/IPage';
-import prisma from '@services/prisma';
+import { PrismaClient } from '@prisma/client';
 
+const prisma = new PrismaClient();
+
+@Service()
 class PageService {
     async getAllPages(): Promise<IPage[]> {
         return prisma.page.findMany();

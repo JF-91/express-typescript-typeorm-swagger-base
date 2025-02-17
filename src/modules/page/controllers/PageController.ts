@@ -1,15 +1,30 @@
 import { JsonController, Get, Post, Put, Delete, Param, Body, Res } from 'routing-controllers';
 import { Response } from 'express';
+import { Inject } from 'typedi';
 import { CreatePageDto } from '../dtos/CreatePageDto';
 import PageService from '../services/PageService';
 
+/**
+ * @swagger
+ * /api/pages:
+ *   get:
+ *     summary: Get all pages
+ *     tags: [Pages]
+ *     responses:
+ *       200:
+ *         description: List of pages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Page'
+ */
 @JsonController('/pages')
 export class PageController {
-    private pageService: PageService;
-
-    constructor() {
-        this.pageService = new PageService();
-    }
+    constructor(
+        @Inject() private pageService: PageService
+    ) {}
 
     @Get('/')
     async getAll(@Res() response: Response) {
@@ -17,6 +32,24 @@ export class PageController {
         return response.json(pages);
     }
 
+    /**
+     * @swagger
+     * /api/pages/{id}:
+     *   get:
+     *     summary: Get a page by ID
+     *     tags: [Pages]
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: integer
+     *     responses:
+     *       200:
+     *         description: Page found
+     *       404:
+     *         description: Page not found
+     */
     @Get('/:id')
     async getOne(@Param('id') id: number, @Res() response: Response) {
         const page = await this.pageService.getPageById(id);
@@ -26,6 +59,22 @@ export class PageController {
         return response.json(page);
     }
 
+    /**
+     * @swagger
+     * /api/pages:
+     *   post:
+     *     summary: Create a new page
+     *     tags: [Pages]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/CreatePageDto'
+     *     responses:
+     *       201:
+     *         description: Page created successfully
+     */
     @Post('/')
     async create(@Body() pageData: CreatePageDto, @Res() response: Response) {
         try {
