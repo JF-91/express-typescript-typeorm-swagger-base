@@ -1,109 +1,172 @@
-# README.md
+# Express TypeScript API
 
-# Proyecto Express con TypeScript
-
-Este proyecto es una aplicación web construida con Express y TypeScript. Proporciona una estructura básica para desarrollar aplicaciones web escalables y mantenibles.
+API RESTful construida con Express, TypeScript y Prisma.
 
 ## Estructura del Proyecto
 
-- **src/**: Contiene el código fuente de la aplicación.
-  - **app.ts**: Punto de entrada de la aplicación.
-  - **config/**: Configuraciones necesarias para la aplicación.
-  - **modules/**: Contiene los módulos de la aplicación.
-    - **user/**: Módulo de usuarios.
-      - **controllers/**: Controladores del módulo de usuarios.
-      - **dtos/**: Data Transfer Objects del módulo de usuarios.
-      - **interfaces/**: Interfaces del módulo de usuarios.
-      - **services/**: Servicios del módulo de usuarios.
-    - **profile/**: Módulo de perfiles.
-      - **controllers/**: Controladores del módulo de perfiles.
-      - **dtos/**: Data Transfer Objects del módulo de perfiles.
-      - **interfaces/**: Interfaces del módulo de perfiles.
-      - **services/**: Servicios del módulo de perfiles.
-    - **page/**: Módulo de páginas.
-      - **controllers/**: Controladores del módulo de páginas.
-      - **dtos/**: Data Transfer Objects del módulo de páginas.
-      - **interfaces/**: Interfaces del módulo de páginas.
-      - **services/**: Servicios del módulo de páginas.
-    - **role/**: Módulo de roles.
-      - **controllers/**: Controladores del módulo de roles.
-      - **dtos/**: Data Transfer Objects del módulo de roles.
-      - **interfaces/**: Interfaces del módulo de roles.
-      - **services/**: Servicios del módulo de roles.
-    - **permission/**: Módulo de permisos.
-      - **controllers/**: Controladores del módulo de permisos.
-      - **dtos/**: Data Transfer Objects del módulo de permisos.
-      - **interfaces/**: Interfaces del módulo de permisos.
-      - **services/**: Servicios del módulo de permisos.
-    - **post/**: Módulo de publicaciones.
-      - **controllers/**: Controladores del módulo de publicaciones.
-      - **dtos/**: Data Transfer Objects del módulo de publicaciones.
-      - **interfaces/**: Interfaces del módulo de publicaciones.
-      - **services/**: Servicios del módulo de publicaciones.
-    - **shared/**: Contiene módulos compartidos.
-      - **middlewares/**: Middlewares compartidos.
-      - **interceptors/**: Interceptores compartidos.
-  - **routes/**: Configuración de rutas de la aplicación.
-  - **services/**: Lógica de negocio y servicios.
-  - **types/**: Interfaces y tipos personalizados.
-  - **utils/**: Funciones utilitarias.
+```
+src/
+├── config/          # Configuraciones de la aplicación
+├── modules/         # Módulos de la aplicación
+│   ├── block/       # Nuevo módulo de bloques
+│   │   ├── controllers/
+│   │   ├── dtos/
+│   │   ├── interfaces/
+│   │   ├── schemas/
+│   │   └── services/
+│   ├── user/
+│   ├── profile/
+│   ├── page/
+│   ├── post/
+│   ├── role/
+│   ├── permission/
+│   └── shared/
+├── routes/
+├── services/
+└── types/
+```
 
-- **tests/**: Contiene pruebas unitarias para la aplicación.
+## Características
 
-- **.env**: Variables de entorno para la aplicación.
+- 🚀 Express + TypeScript
+- 📦 Prisma ORM
+- 🔐 JWT Authentication
+- 📝 Swagger Documentation
+- 🔄 Rate Limiting
+- 🛡️ CORS & Helmet Security
+- 📊 MySQL Database
+- 🐳 Docker Support
 
-- **.gitignore**: Archivos y directorios que deben ser ignorados por Git.
+## Módulos
 
-- **package.json**: Configuración de npm y dependencias del proyecto.
+### Block Module (Nuevo)
+- Gestión de bloques de contenido
+- Soporte para imágenes y videos
+- Tipos de bloques configurables
+- Relaciones con posts
 
-- **tsconfig.json**: Configuración de TypeScript.
+### Post Module
+- CRUD de posts
+- Categorización
+- Relaciones con usuarios y bloques
+
+### User Module
+- Autenticación y autorización
+- Roles y permisos
+- Perfiles de usuario
+
+## Requisitos
+
+- Node.js >= 18
+- MySQL >= 8
+- Docker (opcional)
 
 ## Instalación
 
-1. Clona el repositorio:
-   ```
-   git clone <URL_DEL_REPOSITORIO>
-   ```
-
-2. Navega al directorio del proyecto:
-   ```
-   cd express-typescript-app
-   ```
-
-3. Instala las dependencias:
-   ```
-   npm install
-   ```
-
-## Ejecución
-
-Para ejecutar la aplicación, utiliza el siguiente comando:
-```
-npm start
+1. Clonar el repositorio:
+```bash
+git clone <repository-url>
 ```
 
-## Ejecución con Docker
-
-1. Asegúrate de tener Docker y Docker Compose instalados en tu máquina.
-
-2. Construye y levanta los contenedores:
-   ```
-   docker-compose up --build
-   ```
-
-3. La aplicación estará disponible en `http://localhost:3000` y phpMyAdmin en `http://localhost:8080`.
-
-## Pruebas
-
-Para ejecutar las pruebas, utiliza el siguiente comando:
-```
-npm test
+2. Instalar dependencias:
+```bash
+npm install
 ```
 
-## Contribuciones
+3. Configurar variables de entorno:
+```bash
+cp .env.example .env
+```
 
-Las contribuciones son bienvenidas. Si deseas contribuir, por favor abre un issue o envía un pull request.
+4. Iniciar la base de datos:
+```bash
+docker-compose up mysql -d
+```
+
+5. Ejecutar migraciones:
+```bash
+npm run prisma:migrate
+```
+
+6. Ejecutar seeders:
+```bash
+# Ejecutar todos los seeders
+npm run seed:all
+
+# O ejecutar seeders individualmente
+npm run seed:roles-permissions  # Crear roles y permisos básicos
+npm run seed:admin             # Crear usuario administrador
+npm run seed:blocks            # Crear bloques de ejemplo
+```
+
+## Desarrollo
+
+```bash
+npm run dev
+```
+
+## Docker
+
+Iniciar todo el stack:
+```bash
+docker-compose up -d
+```
+
+## API Documentation
+
+Accede a la documentación Swagger:
+```
+http://localhost:3000/api-docs
+```
+
+## Scripts Disponibles
+
+- `npm run dev`: Desarrollo con hot-reload
+- `npm run build`: Compilar TypeScript
+- `npm start`: Ejecutar en producción
+- `npm test`: Ejecutar tests
+- `npm run prisma:migrate`: Ejecutar migraciones
+- `npm run prisma:studio`: UI para la base de datos
+- `npm run seed:all`: Ejecutar todos los seeders
+- `npm run seed:roles-permissions`: Crear roles y permisos
+- `npm run seed:admin`: Crear usuario admin
+- `npm run seed:blocks`: Crear bloques de ejemplo
+
+## Endpoints Principales
+
+- `GET /api/blocks`: Listar bloques
+- `POST /api/blocks`: Crear bloque
+- `GET /api/posts`: Listar posts
+- `POST /api/users`: Crear usuario
+- `GET /api/profiles`: Listar perfiles
+
+## Seguridad
+
+- Protección CORS
+- Rate Limiting
+- Helmet Security Headers
+- JWT Authentication
+
+## Base de Datos
+
+### Modelos Principales
+- User
+- Profile
+- Post
+- Block
+- BlockImage
+- BlockVideo
+- Role
+- Permission
+
+## Contribución
+
+1. Fork el repositorio
+2. Crear feature branch
+3. Commit cambios
+4. Push al branch
+5. Crear Pull Request
 
 ## Licencia
 
-Este proyecto está bajo la Licencia MIT.
+MIT

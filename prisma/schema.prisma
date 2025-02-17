@@ -47,15 +47,17 @@ model Profile {
 }
 
 model Post {
-    id         Int        @id @default(autoincrement())
+    id         Int           @id @default(autoincrement())
     title      String
     content    String
-    published  Boolean    @default(false)
-    author     User?      @relation(fields: [authorId], references: [id])
+    published  Boolean       @default(false)
+    author     User?         @relation(fields: [authorId], references: [id])
     authorId   Int?
-    createdAt  DateTime   @default(now())
-    updatedAt  DateTime   @updatedAt
-    categories Category[] @relation("PostCategories")
+    createdAt  DateTime      @default(now())
+    updatedAt  DateTime      @updatedAt
+    categories Category[]    @relation("PostCategories")
+    pages      Page[]        @relation("PagesPosts")
+    blocks     PostsBlocks[] // Agregar relación con bloques
 }
 
 model Page {
@@ -66,6 +68,18 @@ model Page {
     published Boolean  @default(false)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    posts     Post[]   @relation("PagesPosts")
+}
+
+model PagesPosts {
+    pageId Int
+    postId Int
+    order  Int
+
+    @@id([pageId, postId])
+    @@index([postId])
+    @@index([pageId])
+    @@map("pages_posts")
 }
 
 model Category {
@@ -85,4 +99,72 @@ model PostCategories {
     @@index([categoryId])
     @@index([postId])
     @@map("post_categories")
+}
+
+model Block {
+    id        Int           @id @default(autoincrement())
+    name      String
+    content   String        @db.Text
+    headline  String?       @db.VarChar(255)
+    type      BlockType     @default(TEXT) // Agregar enum para tipos
+    images    BlockImage[]
+    videos    BlockVideo[]
+    urls      Json?
+    posts     PostsBlocks[] // Agregar relación con posts
+    createdAt DateTime      @default(now())
+    updatedAt DateTime      @updatedAt
+
+    @@index([type])
+}
+
+model PostsBlocks {
+    post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+    block     Block    @relation(fields: [blockId], references: [id], onDelete: Cascade)
+    postId    Int
+    blockId   Int
+    order     Int
+    createdAt DateTime @default(now())
+
+    @@id([postId, blockId])
+    @@index([blockId])
+    @@index([postId])
+    @@map("posts_blocks")
+}
+
+model BlockImage {
+    id        Int      @id @default(autoincrement())
+    url       String   @db.Text
+    alt       String?  @db.VarChar(255)
+    width     Int?
+    height    Int?
+    order     Int      @default(0)
+    block     Block    @relation(fields: [blockId], references: [id], onDelete: Cascade)
+    blockId   Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([blockId])
+}
+
+model BlockVideo {
+    id        Int      @id @default(autoincrement())
+    url       String   @db.Text
+    alt       String?  @db.VarChar(255)
+    width     Int?
+    height    Int?
+    block     Block    @relation(fields: [blockId], references: [id], onDelete: Cascade)
+    blockId   Int
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([blockId])
+}
+
+enum BlockType {
+    TEXT
+    IMAGE
+    VIDEO
+    GALLERY
+    EMBED
+    CODE
 }
